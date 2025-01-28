@@ -1,9 +1,30 @@
-from flask import Flask, request, jsonify
+from flask import Flask, render_template, request, jsonify
 from collections import defaultdict
 
 app = Flask(__name__)
 
+# Serve the HTML file
+@app.route('/')
+def home():
+    return render_template('index.html')
 
+# API endpoint for optimizing trades
+@app.route('/optimize_trades', methods=['POST'])
+def optimize_trades():
+    data = request.json.get('players', [])
+    names = request.json.get('names', {})
+
+    optimizer = BalancedCardTradingOptimizer(data)
+    trades, swaps_count, total_missing = optimizer.optimize_trades()
+
+    result = {
+        "trades": [{"giver": names[t[0]], "receiver": names[t[1]], "card": t[2]} for t in trades],
+        "missing_after_trades": [{"name": names[i], "missing": missing} for i, missing in enumerate(total_missing)],
+        "swap_counts": {names[i]: swaps_count[i] for i in range(len(swaps_count))}
+    }
+    return jsonify(result)
+
+# Your optimizer class here
 class BalancedCardTradingOptimizer:
     def __init__(self, friends):
         self.friends = friends
@@ -41,21 +62,6 @@ class BalancedCardTradingOptimizer:
 
         total_missing = [friend["missing"] for friend in self.friends]
         return trades, swaps_count, total_missing
-
-@app.route('/', methods=['POST'])
-def optimize_trades():
-    data = request.json.get('players', [])
-    names = request.json.get('names', {})
-
-    optimizer = BalancedCardTradingOptimizer(data)
-    trades, swaps_count, total_missing = optimizer.optimize_trades()
-
-    result = {
-        "trades": [{"giver": names[t[0]], "receiver": names[t[1]], "card": t[2]} for t in trades],
-        "missing_after_trades": [{"name": names[i], "missing": missing} for i, missing in enumerate(total_missing)],
-        "swap_counts": {names[i]: swaps_count[i] for i in range(len(swaps_count))}
-    }
-    return jsonify(result)
 
 if __name__ == '__main__':
     app.run(debug=True)
