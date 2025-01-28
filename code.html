@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Trading Optimizer</title>
+    <script>
+        async function submitData() {
+            let players = [];
+            let names = {};
+            document.querySelectorAll(".player").forEach((playerDiv, index) => {
+                let name = playerDiv.querySelector(".name").value;
+                let doubles = playerDiv.querySelector(".doubles").value.split(",").map(Number).filter(n => !isNaN(n));
+                let missing = playerDiv.querySelector(".missing").value.split(",").map(Number).filter(n => !isNaN(n));
+
+                players.push({ doubles, missing });
+                names[index] = name;
+            });
+
+            const response = await fetch("/optimize_trades", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ players, names })
+            });
+
+            const data = await response.json();
+            displayResults(data);
+        }
+
+        function displayResults(data) {
+            let resultDiv = document.getElementById("results");
+            resultDiv.innerHTML = `<h2>Trade Suggestions:</h2>`;
+            data.trades.forEach(trade => {
+                resultDiv.innerHTML += `<p><strong>${trade.giver}</strong> gives card <strong>${trade.card}</strong> to <strong>${trade.receiver}</strong></p>`;
+            });
+
+            resultDiv.innerHTML += `<h2>Remaining Missing Cards:</h2>`;
+            data.missing_after_trades.forEach(entry => {
+                resultDiv.innerHTML += `<p><strong>${entry.name}:</strong> ${entry.missing.length ? entry.missing.join(", ") : "None"}</p>`;
+            });
+
+            resultDiv.innerHTML += `<h2>Number of Trades Per Player:</h2>`;
+            for (let [name, count] of Object.entries(data.swap_counts)) {
+                resultDiv.innerHTML += `<p><strong>${name}:</strong> ${count} trades</p>`;
+            }
+        }
+
+        function addPlayer() {
+            let playersDiv = document.getElementById("players");
+            let playerDiv = document.createElement("div");
+            playerDiv.className = "player";
+            playerDiv.innerHTML = `
+                <h3>Player</h3>
+                <label>Name: <input type="text" class="name"></label><br>
+                <label>Duplicates (comma-separated): <input type="text" class="doubles"></label><br>
+                <label>Missing (comma-separated): <input type="text" class="missing"></label><br><hr>
+            `;
+            playersDiv.appendChild(playerDiv);
+        }
+    </script>
+</head>
+<body>
+    <h1>Card Trading Optimizer</h1>
+    <button onclick="addPlayer()">Add Player</button>
+    <div id="players"></div>
+    <button onclick="submitData()">Optimize Trades</button>
+    <div id="results"></div>
+</body>
+</html>
