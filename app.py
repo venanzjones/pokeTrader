@@ -8,8 +8,6 @@ app = Flask(__name__)
 def home():
     return render_template('index.html')
 
-# API endpoint for optimizing trades
-@app.route('/optimize_trades', methods=['POST'])
 def optimize_trades():
     data = request.json.get('players', [])
     names = request.json.get('names', {})
@@ -18,9 +16,11 @@ def optimize_trades():
     trades, swaps_count, total_missing = optimizer.optimize_trades()
 
     result = {
-        "trades": [{"giver": names[t[0]], "receiver": names[t[1]], "card": t[2]} for t in trades],
-        "missing_after_trades": [{"name": names[i], "missing": missing} for i, missing in enumerate(total_missing)],
-        "swap_counts": {names[i]: swaps_count[i] for i in range(len(swaps_count))}
+        "trades": [{"giver": names.get(t[0], f"Player {t[0]}"), 
+                    "receiver": names.get(t[1], f"Player {t[1]}"), 
+                    "card": t[2]} for t in trades],
+        "missing_after_trades": [{"name": names.get(i, f"Player {i}"), "missing": missing} for i, missing in enumerate(total_missing)],
+        "swap_counts": {names.get(i, f"Player {i}"): swaps_count[i] for i in range(len(swaps_count))}
     }
     return jsonify(result)
 
