@@ -3,6 +3,10 @@ from collections import defaultdict
 
 app = Flask(__name__)
 
+@app.route("/")
+def home():
+    return "Hello, your app is working!"
+
 class BalancedCardTradingOptimizer:
     def __init__(self, friends):
         self.friends = friends
