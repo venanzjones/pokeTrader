@@ -3,7 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Card Trading Optimizer</title>
+    <title>Pokémon Card Trading Optimizer</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+        body {
+            background-color: #f2d94e;
+            font-family: 'Press Start 2P', cursive;
+            text-align: center;
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            background: #ff3b30;
+            border-radius: 15px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+            border: 4px solid black;
+        }
+
+        h1 {
+            color: white;
+            text-shadow: 2px 2px black;
+        }
+
+        button {
+            background: #3b4cca;
+            color: white;
+            font-size: 16px;
+            border: 3px solid black;
+            padding: 10px;
+            margin-top: 10px;
+            cursor: pointer;
+            border-radius: 10px;
+        }
+
+        button:hover {
+            background: #ffcc00;
+            color: black;
+        }
+
+        .player {
+            background: white;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 10px;
+            border: 3px solid black;
+        }
+
+        input {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+            padding: 8px;
+            border: 2px solid black;
+            width: 90%;
+            text-align: center;
+            margin: 5px;
+        }
+
+        .pokeball {
+            width: 50px;
+            height: 50px;
+            margin-top: 15px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+    </style>
     <script>
         async function submitData() {
             let players = [];
@@ -17,6 +89,8 @@
                 names[index] = name;
             });
 
+            document.getElementById("pokeball").style.display = "inline-block";
+
             const response = await fetch("/optimize_trades", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -28,6 +102,7 @@
         }
 
         function displayResults(data) {
+            document.getElementById("pokeball").style.display = "none";
             let resultDiv = document.getElementById("results");
             resultDiv.innerHTML = `<h2>Trade Suggestions:</h2>`;
             data.trades.forEach(trade => {
@@ -50,7 +125,7 @@
             let playerDiv = document.createElement("div");
             playerDiv.className = "player";
             playerDiv.innerHTML = `
-                <h3>Player</h3>
+                <h3>Trainer</h3>
                 <label>Name: <input type="text" class="name"></label><br>
                 <label>Duplicates (comma-separated): <input type="text" class="doubles"></label><br>
                 <label>Missing (comma-separated): <input type="text" class="missing"></label><br><hr>
@@ -60,10 +135,14 @@
     </script>
 </head>
 <body>
-    <h1>Card Trading Optimizer</h1>
-    <button onclick="addPlayer()">Add Player</button>
-    <div id="players"></div>
-    <button onclick="submitData()">Optimize Trades</button>
-    <div id="results"></div>
+    <div class="container">
+        <h1>Pokémon Card Trading</h1>
+        <button onclick="addPlayer()">Add Trainer</button>
+        <div id="players"></div>
+        <button onclick="submitData()">Optimize Trades</button>
+        <br>
+        <img id="pokeball" class="pokeball" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Pok%C3%A9_Ball_icon.svg" style="display:none;">
+        <div id="results"></div>
+    </div>
 </body>
 </html>
