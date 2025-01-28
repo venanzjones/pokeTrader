@@ -3,9 +3,6 @@ from collections import defaultdict
 
 app = Flask(__name__)
 
-@app.route("/")
-def home():
-    return "Hello, your app is working!"
 
 class BalancedCardTradingOptimizer:
     def __init__(self, friends):
@@ -45,7 +42,7 @@ class BalancedCardTradingOptimizer:
         total_missing = [friend["missing"] for friend in self.friends]
         return trades, swaps_count, total_missing
 
-@app.route('/optimize_trades', methods=['POST'])
+@app.route('/', methods=['POST'])
 def optimize_trades():
     data = request.json.get('players', [])
     names = request.json.get('names', {})
