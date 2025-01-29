@@ -8,25 +8,26 @@
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
         body {
-            background-color: #f2d94e;
+            background: url('https://wallpapercave.com/wp/wp2561353.png') no-repeat center center fixed;
+            background-size: cover;
             font-family: 'Press Start 2P', cursive;
             text-align: center;
-            color: #333;
+            color: white;
         }
 
         .container {
             max-width: 600px;
             margin: auto;
             padding: 20px;
-            background: #ff3b30;
+            background: rgba(255, 59, 48, 0.9);
             border-radius: 15px;
-            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.5);
             border: 4px solid black;
         }
 
         h1 {
-            color: white;
-            text-shadow: 2px 2px black;
+            color: yellow;
+            text-shadow: 3px 3px black;
         }
 
         button {
@@ -51,6 +52,7 @@
             margin: 10px 0;
             border-radius: 10px;
             border: 3px solid black;
+            color: black;
         }
 
         input {
@@ -81,13 +83,15 @@
             let players = [];
             let names = {};
             document.querySelectorAll(".player").forEach((playerDiv, index) => {
-                let name = playerDiv.querySelector(".name").value;
+                let name = playerDiv.querySelector(".name").value || `Trainer ${index + 1}`;
                 let doubles = playerDiv.querySelector(".doubles").value.split(",").map(Number).filter(n => !isNaN(n));
                 let missing = playerDiv.querySelector(".missing").value.split(",").map(Number).filter(n => !isNaN(n));
 
                 players.push({ doubles, missing });
                 names[index] = name;
             });
+
+            console.log("Sending payload:", { players, names });
 
             document.getElementById("pokeball").style.display = "inline-block";
 
@@ -126,9 +130,9 @@
             playerDiv.className = "player";
             playerDiv.innerHTML = `
                 <h3>Trainer</h3>
-                <label>Name: <input type="text" class="name"></label><br>
-                <label>Duplicates (comma-separated): <input type="text" class="doubles"></label><br>
-                <label>Missing (comma-separated): <input type="text" class="missing"></label><br><hr>
+                <label>Name: <input type="text" class="name" required></label><br>
+                <label>Duplicates (comma-separated): <input type="text" class="doubles" required></label><br>
+                <label>Missing (comma-separated): <input type="text" class="missing" required></label><br><hr>
             `;
             playersDiv.appendChild(playerDiv);
         }
