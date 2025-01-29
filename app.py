@@ -3,7 +3,10 @@ from collections import defaultdict
 
 app = Flask(__name__)
 
-# Serve the HTML file
+@app.route('/')
+def home():
+    return render_template('index.html')
+    
 @app.route('/optimize_trades', methods=['POST'])
 def optimize_trades():
     data = request.json
