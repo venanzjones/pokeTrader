@@ -4,15 +4,16 @@ from collections import defaultdict
 app = Flask(__name__)
 
 # Serve the HTML file
-@app.route('/')
-def home():
-    return render_template('index.html')
-
+@app.route('/optimize_trades', methods=['POST'])
 def optimize_trades():
-    data = request.json.get('players', [])
-    names = request.json.get('names', {})
+    data = request.json
+    if not data or 'players' not in data or 'names' not in data:
+        return jsonify({"error": "Invalid request data"}), 400
 
-    optimizer = BalancedCardTradingOptimizer(data)
+    players = data['players']
+    names = data['names']
+
+    optimizer = BalancedCardTradingOptimizer(players)
     trades, swaps_count, total_missing = optimizer.optimize_trades()
 
     result = {
