@@ -8,7 +8,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
         body {
-            background: url('https://wallpapercave.com/wp/wp2561353.png') no-repeat center center fixed;
+            background: url('https://images.alphacoders.com/882/882312.png') no-repeat center center fixed;
             background-size: cover;
             font-family: 'Press Start 2P', cursive;
             text-align: center;
@@ -72,6 +72,10 @@
             animation: spin 1s linear infinite;
         }
 
+        .hidden {
+            display: none;
+        }
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
@@ -93,21 +97,30 @@
 
             console.log("Sending payload:", { players, names });
 
-            document.getElementById("pokeball").style.display = "inline-block";
+            const pokeball = document.getElementById("pokeball");
+            pokeball.classList.remove("hidden");
 
-            const response = await fetch("/optimize_trades", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ players, names })
-            });
+            try {
+                const response = await fetch("/optimize_trades", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ players, names })
+                });
 
-            const data = await response.json();
-            displayResults(data);
+                if (!response.ok) throw new Error("Failed to fetch results");
+
+                const data = await response.json();
+                displayResults(data);
+            } catch (error) {
+                console.error("Error:", error);
+                alert("An error occurred. Please try again.");
+            } finally {
+                pokeball.classList.add("hidden");
+            }
         }
 
         function displayResults(data) {
-            document.getElementById("pokeball").style.display = "none";
-            let resultDiv = document.getElementById("results");
+            const resultDiv = document.getElementById("results");
             resultDiv.innerHTML = `<h2>Trade Suggestions:</h2>`;
             data.trades.forEach(trade => {
                 resultDiv.innerHTML += `<p><strong>${trade.giver}</strong> gives card <strong>${trade.card}</strong> to <strong>${trade.receiver}</strong></p>`;
@@ -145,7 +158,7 @@
         <div id="players"></div>
         <button onclick="submitData()">Optimize Trades</button>
         <br>
-        <img id="pokeball" class="pokeball" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Pok%C3%A9_Ball_icon.svg" style="display:none;">
+        <img id="pokeball" class="pokeball hidden" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Pok%C3%A9_Ball_icon.svg">
         <div id="results"></div>
     </div>
 </body>
