@@ -8,7 +8,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
         body {
-            background: url('https://www.chromethemer.com/wallpapers/chromebook-wallpapers/images/960/pokemon-chromebook-wallpaper.jpg') no-repeat center center fixed;
+            background: url('https://wallpapercave.com/wp/wp2561353.jpg') no-repeat center center fixed;
             background-size: cover;
             font-family: 'Press Start 2P', cursive;
             text-align: center;
@@ -86,12 +86,12 @@
             let players = [];
             let names = {};
             document.querySelectorAll(".player").forEach((playerDiv, index) => {
-                let name = playerDiv.querySelector(".name").value;
+                let name = playerDiv.querySelector(".name").value || `Trainer ${index + 1}`;
                 let doubles = playerDiv.querySelector(".doubles").value.split(",").map(Number).filter(n => !isNaN(n));
                 let missing = playerDiv.querySelector(".missing").value.split(",").map(Number).filter(n => !isNaN(n));
 
                 players.push({ doubles, missing });
-                names[index] = name;
+                names[String(index)] = name;
             });
 
             console.log("Sending payload:", { players, names });
