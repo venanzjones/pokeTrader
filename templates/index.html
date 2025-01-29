@@ -8,11 +8,10 @@
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
         body {
-            background: url('https://images.alphacoders.com/882/882312.png') no-repeat center center fixed;
+            background: url('https://www.chromethemer.com/wallpapers/chromebook-wallpapers/images/960/pokemon-chromebook-wallpaper.jpg') no-repeat center center fixed;
             background-size: cover;
             font-family: 'Press Start 2P', cursive;
             text-align: center;
-            color: white;
         }
 
         .container {
@@ -87,7 +86,7 @@
             let players = [];
             let names = {};
             document.querySelectorAll(".player").forEach((playerDiv, index) => {
-                let name = playerDiv.querySelector(".name").value || `Trainer ${index + 1}`;
+                let name = playerDiv.querySelector(".name").value;
                 let doubles = playerDiv.querySelector(".doubles").value.split(",").map(Number).filter(n => !isNaN(n));
                 let missing = playerDiv.querySelector(".missing").value.split(",").map(Number).filter(n => !isNaN(n));
 
